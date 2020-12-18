@@ -15,11 +15,9 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <include layout="@layout/nav_header_main"
                 android:id="@+id/nav_drawer_header_include" />
@@ -27,8 +25,9 @@
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_below="@+id/nav_drawer_header_include"
                 android:id="@+id/channel_list"/>
-        </LinearLayout>
+        </RelativeLayout>
     </android.support.design.widget.NavigationView>
 
     <include

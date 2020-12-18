@@ -1,19 +1,18 @@
 package vanson.dev.smackchapapp
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
+import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
+import android.util.Log
+import android.view.View
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
-import android.view.View
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,14 +52,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loginBtnNavHeaderClicked(view: View){
-
+        Log.d("Bug", "Dau xanh_2")
+        var loginIntent = Intent(this, LoginActivity::class.java)
+        startActivity(loginIntent)
     }
 
     fun addChannelClicked(view: View){
-
+        Log.d("Bug", "Dau xanh")
     }
 
     fun sendMessageBtnClicked(view: View){
-
+        Log.d("Bug", "Dau xanh_3")
     }
 }
