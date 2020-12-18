@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.ImageButton
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -38,6 +40,16 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        //Onclick
+//        val loginBtn : Button = header.findViewById(R.id.loginBtnNavHeader)
+////        val channelBtn : ImageButton = header.findViewById(R.id.addChannelBtn)
+//        loginBtn.setOnClickListener {
+//            Log.d("Bug", "Please@@")
+//        }
+//        channelBtn.setOnClickListener {
+//            Log.d("Bug", "SML")
+//        }
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {
