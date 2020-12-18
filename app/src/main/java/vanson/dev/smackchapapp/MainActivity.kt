@@ -10,11 +10,13 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.RelativeLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,16 +42,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        //Onclick
-//        val loginBtn : Button = header.findViewById(R.id.loginBtnNavHeader)
-////        val channelBtn : ImageButton = header.findViewById(R.id.addChannelBtn)
-//        loginBtn.setOnClickListener {
-//            Log.d("Bug", "Please@@")
-//        }
-//        channelBtn.setOnClickListener {
-//            Log.d("Bug", "SML")
-//        }
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -64,7 +56,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loginBtnNavHeaderClicked(view: View){
-        Log.d("Bug", "Dau xanh_2")
         var loginIntent = Intent(this, LoginActivity::class.java)
         startActivity(loginIntent)
     }
