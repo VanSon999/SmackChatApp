@@ -1,11 +1,12 @@
 package vanson.dev.smackchapapp.Controller
 
 import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.activity_create_user.*
 import vanson.dev.smackchapapp.R
+import vanson.dev.smackchapapp.Services.AuthService
 import java.util.*
 
 class CreateUserActivity : AppCompatActivity() {
@@ -41,6 +42,13 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     fun signUpBtnClicked(view: View){
+        AuthService.registerUser(this, "",""){
+            complete ->
+            if(complete){
 
+            }else{
+
+            }
+        }
     }
 }
