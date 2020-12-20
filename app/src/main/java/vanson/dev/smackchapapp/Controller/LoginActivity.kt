@@ -1,9 +1,10 @@
-package vanson.dev.smackchapapp
+package vanson.dev.smackchapapp.Controller
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import vanson.dev.smackchapapp.R
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
