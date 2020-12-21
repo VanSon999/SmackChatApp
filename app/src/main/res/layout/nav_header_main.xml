@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Van Son"
+        android:text="Please Log In!"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/userImageNavHeader"
@@ -38,7 +38,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="oncepice1@gmail.com"
         app:layout_constraintStart_toEndOf="@+id/userImageNavHeader"
         app:layout_constraintTop_toBottomOf="@+id/userNameNavHeader" />
 
