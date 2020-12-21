@@ -7,6 +7,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_create_user.*
 import vanson.dev.smackchapapp.R
 import vanson.dev.smackchapapp.Services.AuthService
+import vanson.dev.smackchapapp.Utilities.UserDataService
 import java.util.*
 
 class CreateUserActivity : AppCompatActivity() {
@@ -44,12 +45,19 @@ class CreateUserActivity : AppCompatActivity() {
     fun signUpBtnClicked(view: View){
         val email = createEmail.text.toString()
         val password = createPassword.text.toString()
+        val userName = createUserName.text.toString()
         AuthService.registerUser(this, email, password){registerSuccess ->
             if (registerSuccess) {
                 AuthService.loginUser(this, email, password) { loginSuccess ->
                     if (loginSuccess) {
-                        println(AuthService.authToken)
-                        println(AuthService.userEmail)
+                        AuthService.createUser(this,userName,email,userAvatar, avatarColor){complete ->
+                            if(complete){
+                                println(UserDataService.avatarName)
+                                println(UserDataService.avatarColor)
+                                println(UserDataService.name)
+                                finish() // to Stop current activity
+                            }
+                        }
                     }
                 }
             }
