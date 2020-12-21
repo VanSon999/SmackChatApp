@@ -59,7 +59,7 @@ class CreateUserActivity : AppCompatActivity() {
                         if (loginSuccess) {
                             AuthService.createUser(this,userName,email,userAvatar, avatarColor){complete ->
                                 if(complete){
-                                    val userDataChange = Intent(BROADCAST_USER_DATA_CHANGE) //Create broad cast
+                                    val userDataChange = Intent(BROADCAST_USER_DATA_CHANGE) //Create broadcast to notify other activity
                                     LocalBroadcastManager.getInstance(this).sendBroadcast(userDataChange)
                                     enableSpinner(false)
                                     finish() // to Stop current activity
@@ -92,6 +92,9 @@ class CreateUserActivity : AppCompatActivity() {
         }else{
             progressBarCreateUser.visibility = View.INVISIBLE
         }
+        createPassword.isEnabled = !enable
+        createEmail.isEnabled = !enable
+        createUserName.isEnabled = !enable
         signUpBtn.isEnabled = !enable
         createAvatar.isEnabled = !enable
         generateBackgroundColorBtn.isEnabled = !enable

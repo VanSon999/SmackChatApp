@@ -1,8 +1,13 @@
 package vanson.dev.smackchapapp.Controller
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -13,12 +18,27 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import kotlinx.android.synthetic.main.nav_header_main.*
 import vanson.dev.smackchapapp.R
+import vanson.dev.smackchapapp.Services.AuthService
+import vanson.dev.smackchapapp.Services.UserDataService
+import vanson.dev.smackchapapp.Utilities.BROADCAST_USER_DATA_CHANGE
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private val userDataChangeReceiver = object : BroadcastReceiver(){ //receiver broadcast
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if(AuthService.isLoggedIn){
+                userNameNavHeader.text = UserDataService.name
+                userEmailNavHeader.text = UserDataService.email
+                userImageNavHeader.setImageResource(resources.getIdentifier(UserDataService.avatarName, "drawable", packageName))
+                loginBtnNavHeader.text = "Logout"
+                userImageNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
+            }
+        }
 
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,6 +62,9 @@ class MainActivity : AppCompatActivity() {
         ), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter( //register listen broadcast
+            BROADCAST_USER_DATA_CHANGE))
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -56,8 +79,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loginBtnNavHeaderClicked(view: View){
-        var loginIntent = Intent(this, LoginActivity::class.java)
-        startActivity(loginIntent)
+        if(AuthService.isLoggedIn){
+            UserDataService.logOut()
+            userNameNavHeader.text = "Please login!"
+            userEmailNavHeader.text = ""
+            userImageNavHeader.setImageResource(R.drawable.profiledefault)
+            loginBtnNavHeader.text = "Login"
+            userImageNavHeader.setBackgroundColor(Color.TRANSPARENT)
+        }else{
+            var loginIntent = Intent(this, LoginActivity::class.java)
+            startActivity(loginIntent)
+        }
     }
 
     fun addChannelClicked(view: View){
