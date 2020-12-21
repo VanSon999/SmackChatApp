@@ -1,4 +1,4 @@
-package vanson.dev.smackchapapp.Utilities
+package vanson.dev.smackchapapp.Services
 
 object UserDataService {
     var id = ""

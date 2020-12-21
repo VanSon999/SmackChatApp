@@ -12,7 +12,6 @@ import org.json.JSONObject
 import vanson.dev.smackchapapp.Utilities.URL_CREATE_USER
 import vanson.dev.smackchapapp.Utilities.URL_LOGIN
 import vanson.dev.smackchapapp.Utilities.URL_REGISTER
-import vanson.dev.smackchapapp.Utilities.UserDataService
 
 
 //import android.content.Context
