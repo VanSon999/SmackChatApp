@@ -67,7 +67,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        hideKeyBoard()
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter( //register listen broadcast
             BROADCAST_USER_DATA_CHANGE))
     }
@@ -109,11 +108,9 @@ class MainActivity : AppCompatActivity() {
                     val channelName = name.text.toString()
                     val descripChannel = description.text.toString()
 
-                    hideKeyBoard()
                 }
                 .setNegativeButton("Cancel"){dialogInterface, i ->
 
-                    hideKeyBoard()
                 }
                 .show()
         }else{
@@ -122,10 +119,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun sendMessageBtnClicked(view: View){
+        hideKeyBoard()
         Log.d("Bug", "Dau xanh_3")
     }
 
-    fun hideKeyBoard(){
+    private fun hideKeyBoard(){
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         if(inputManager.isAcceptingText){
             inputManager.hideSoftInputFromWindow(currentFocus?.windowToken,0)
