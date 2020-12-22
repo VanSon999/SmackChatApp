@@ -23,14 +23,21 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import io.socket.client.IO
+import io.socket.client.Socket
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.nav_header_main.*
+import vanson.dev.smackchapapp.Model.Channel
 import vanson.dev.smackchapapp.R
 import vanson.dev.smackchapapp.Services.AuthService
+import vanson.dev.smackchapapp.Services.MessageService
 import vanson.dev.smackchapapp.Services.UserDataService
 import vanson.dev.smackchapapp.Utilities.BROADCAST_USER_DATA_CHANGE
+import vanson.dev.smackchapapp.Utilities.SOCKET_URL
 
 class MainActivity : AppCompatActivity() {
 
+    private val socket = IO.socket(SOCKET_URL)
     private lateinit var appBarConfiguration: AppBarConfiguration
     private val userDataChangeReceiver = object : BroadcastReceiver(){ //receiver broadcast
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -66,11 +73,26 @@ class MainActivity : AppCompatActivity() {
         ), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter( //register listen broadcast
-            BROADCAST_USER_DATA_CHANGE))
+        socket.connect()
+        socket.on("channelCreated", onNewChannel) //work on other thread not main thread
     }
 
+    override fun onResume() {
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter( //register listen broadcast
+            BROADCAST_USER_DATA_CHANGE))
+        super.onResume()
+    }
+
+//    override fun onPause() {
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
+//        super.onPause()
+//    }
+
+    override fun onDestroy() {
+        socket.disconnect()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
+        super.onDestroy()
+    }
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {
 //        // Inflate the menu; this adds items to the action bar if it is present.
 //        menuInflater.inflate(R.menu.main, menu)
@@ -103,11 +125,14 @@ class MainActivity : AppCompatActivity() {
 
             builder.setView(dialogView)
                 .setPositiveButton("Add"){ dialogInterface, i ->
-                    val name = dialogView.findViewById<EditText>(R.id.addChannelNameText)
-                    val description = dialogView.findViewById<EditText>(R.id.addChannelDescriptionText)
-                    val channelName = name.text.toString()
-                    val descripChannel = description.text.toString()
+                    val nameTextField = dialogView.findViewById<EditText>(R.id.addChannelNameText)
+                    val descTextField = dialogView.findViewById<EditText>(R.id.addChannelDescriptionText)
+                    val channelName = nameTextField.text.toString()
+                    val channelDesc = descTextField.text.toString()
 
+
+                    //Emit create channel
+                    socket.emit("newChannel", channelName, channelDesc)
                 }
                 .setNegativeButton("Cancel"){dialogInterface, i ->
 
@@ -118,6 +143,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val onNewChannel = Emitter.Listener { args ->
+        runOnUiThread { //return to main thread to update activity or data,...
+            val channelName = args[0] as String
+            val channelDescription = args[1] as String
+            val channelId = args[2] as String
+
+            val newChannel = Channel(channelName, channelDescription, channelId)
+            MessageService.channels.add(newChannel)
+            println(newChannel.name)
+        }
+    }
     fun sendMessageBtnClicked(view: View){
         hideKeyBoard()
         Log.d("Bug", "Dau xanh_3")
@@ -129,4 +165,6 @@ class MainActivity : AppCompatActivity() {
             inputManager.hideSoftInputFromWindow(currentFocus?.windowToken,0)
         }
     }
+    ////////////////////////////////////////////////////////////////////////////////
+    //Note: Should handle web request with background request or worker thread instead of main thread, after complete mission we will return result to main thread
 }

@@ -7,3 +7,6 @@ const val URL_CREATE_USER = "${BASE_URL}user/add"
 const val URL_FIND_USER_BY_EMAIL = "${BASE_URL}user/byEmail/"
 // BroadCast Constants
 const val BROADCAST_USER_DATA_CHANGE =  "BROADCAST_USER_DATA_CHANGE"
+
+//Socket
+const val SOCKET_URL = "https://smackchatapp2020.herokuapp.com"

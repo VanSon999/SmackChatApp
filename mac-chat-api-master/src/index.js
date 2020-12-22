@@ -6,7 +6,7 @@ import socket from 'socket.io';
 import Message from './model/message';
 import Channel from './model/channel';
 
-const LocalStrategy  = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 
 import config from './config';
 import routes from './routes';
@@ -45,17 +45,18 @@ app.get('/', (req, res) => {
 //Listen for connection
 var typingUsers = {};
 
-io.on('connection', function(client) {
+io.on('connection', function (client) {
   console.log('a user connected');
   //Listens for a new chat message
-  client.on('newChannel', function(name, description) {
+  client.on('newChannel', function (name, description) {
+    console.log('new channel')
     //Create channel
     let newChannel = new Channel({
-    name: name,
-    description: description,
-  });
+      name: name,
+      description: description,
+    });
     //Save it to database
-    newChannel.save(function(err, channel){
+    newChannel.save(function (err, channel) {
       //Send message to those connected in the room
       console.log('new channel created');
       io.emit("channelCreated", channel.name, channel.description, channel.id);
@@ -63,39 +64,43 @@ io.on('connection', function(client) {
   });
 
   //Listens for user typing.
-  client.on("startType", function(userName, channelId){
+  client.on("startType", function (userName, channelId) {
     console.log("User " + userName + " is writing a message...");
     typingUsers[userName] = channelId;
     io.emit("userTypingUpdate", typingUsers, channelId);
   });
 
-  client.on("stopType", function(userName){
+  client.on("stopType", function (userName) {
     console.log("User " + userName + " has stopped writing a message...");
     delete typingUsers[userName];
     io.emit("userTypingUpdate", typingUsers);
   });
 
   //Listens for a new chat message
-  client.on('newMessage', function(messageBody, userId, channelId, userName, userAvatar, userAvatarColor) {
+  client.on('newMessage', function (messageBody, userId, channelId, userName, userAvatar, userAvatarColor) {
     //Create message
 
     console.log(messageBody);
 
     let newMessage = new Message({
-    messageBody: messageBody,
-    userId: userId,
-    channelId: channelId,
-    userName: userName,
-    userAvatar: userAvatar,
-    userAvatarColor: userAvatarColor
-  });
+      messageBody: messageBody,
+      userId: userId,
+      channelId: channelId,
+      userName: userName,
+      userAvatar: userAvatar,
+      userAvatarColor: userAvatarColor
+    });
     //Save it to database
-    newMessage.save(function(err, msg){
+    newMessage.save(function (err, msg) {
       //Send message to those connected in the room
       console.log('new message sent');
 
-      io.emit("messageCreated",  msg.messageBody, msg.userId, msg.channelId, msg.userName, msg.userAvatar, msg.userAvatarColor, msg.id, msg.timeStamp);
+      io.emit("messageCreated", msg.messageBody, msg.userId, msg.channelId, msg.userName, msg.userAvatar, msg.userAvatarColor, msg.id, msg.timeStamp);
     });
+  });
+
+  client.on("disconnect", function () {
+    console.log('Got disconnect!');
   });
 });
 /*||||||||||||||||||||END SOCKETS||||||||||||||||||*/
