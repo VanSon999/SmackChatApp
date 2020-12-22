@@ -9,10 +9,15 @@ import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -44,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
 //        val fab: FloatingActionButton = findViewById(R.id.fab)
 //        fab.setOnClickListener { view ->
 //            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -63,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        hideKeyBoard()
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter( //register listen broadcast
             BROADCAST_USER_DATA_CHANGE))
     }
@@ -93,10 +98,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addChannelClicked(view: View){
-        Log.d("Bug", "Dau xanh")
+        if(AuthService.isLoggedIn){
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.add_channel_diag, null)
+
+            builder.setView(dialogView)
+                .setPositiveButton("Add"){ dialogInterface, i ->
+                    val name = dialogView.findViewById<EditText>(R.id.addChannelNameText)
+                    val description = dialogView.findViewById<EditText>(R.id.addChannelDescriptionText)
+                    val channelName = name.text.toString()
+                    val descripChannel = description.text.toString()
+
+                    hideKeyBoard()
+                }
+                .setNegativeButton("Cancel"){dialogInterface, i ->
+
+                    hideKeyBoard()
+                }
+                .show()
+        }else{
+            Toast.makeText(this,"You need log in to do that!",Toast.LENGTH_LONG).show()
+        }
     }
 
     fun sendMessageBtnClicked(view: View){
         Log.d("Bug", "Dau xanh_3")
+    }
+
+    fun hideKeyBoard(){
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if(inputManager.isAcceptingText){
+            inputManager.hideSoftInputFromWindow(currentFocus?.windowToken,0)
+        }
     }
 }
