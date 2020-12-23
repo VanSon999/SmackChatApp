@@ -72,6 +72,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateWithChannel(){
         mainChannelName.text = "#${selectedChannel?.name}"
+
+        if(selectedChannel != null){
+            MessageService.getMessages(selectedChannel!!.id){ complete ->
+                if(complete){
+                    for (message in MessageService.messages){
+                        println(message.message)
+                    }
+                }
+            }
+        }
     }
     private fun setupAdapters(){
         channelAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1, MessageService.channels)
