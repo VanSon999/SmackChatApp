@@ -9,12 +9,13 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import vanson.dev.smackchapapp.Controller.App
 import vanson.dev.smackchapapp.Model.Channel
+import vanson.dev.smackchapapp.Model.Message
 import vanson.dev.smackchapapp.Utilities.URL_GET_CHANNELS
 import java.util.ArrayList
 
 object MessageService {
     val channels = ArrayList<Channel>()
-
+    val messages = ArrayList<Message>()
     fun getChannels(complete: (Boolean) -> Unit){
         val channelsRequest = object : JsonArrayRequest(Method.GET, URL_GET_CHANNELS, null, Response.Listener { response ->
             try{

@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import vanson.dev.smackchapapp.Model.Channel
+import vanson.dev.smackchapapp.Model.Message
 import vanson.dev.smackchapapp.R
 import vanson.dev.smackchapapp.Services.AuthService
 import vanson.dev.smackchapapp.Services.MessageService
@@ -100,6 +101,7 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         socket.connect()
         socket.on("channelCreated", onNewChannel) //work on other thread not main thread
+        socket.on("messageCreated", onNewMessage)
         setupAdapters()
 
         //listener for item in list channel
@@ -190,9 +192,30 @@ class MainActivity : AppCompatActivity() {
             channelAdapter.notifyDataSetChanged()
         }
     }
+
+    private val onNewMessage = Emitter.Listener { args ->
+        runOnUiThread {
+            val msgBody = args[0] as String
+            val channelId = args[2] as String
+            val userName = args[3] as String
+            val userAvatar = args[4] as String
+            val userAvatarColor = args[5] as String
+            val id = args[6] as String
+            val timeStamp = args[7] as String
+
+            val newMessage = Message(msgBody, userName, channelId, userAvatar, userAvatarColor, id, timeStamp)
+            MessageService.messages.add(newMessage)
+            println(newMessage.message)
+        }
+    }
     fun sendMessageBtnClicked(view: View){
+        if(App.prefs.isLoggedIn && messageTextField.text.isNotEmpty() && selectedChannel != null){
+            val userId = UserDataService.id
+            val channelId = selectedChannel!!.id
+            socket.emit("newMessage", messageTextField.text.toString(), userId,channelId, UserDataService.name, UserDataService.avatarName, UserDataService.avatarColor)
+            messageTextField.text.clear()
+        }
         hideKeyBoard()
-        Log.d("Bug", "Dau xanh_3")
     }
 
     private fun hideKeyBoard(){
