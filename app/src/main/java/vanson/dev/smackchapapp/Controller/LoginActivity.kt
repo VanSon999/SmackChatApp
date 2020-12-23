@@ -21,7 +21,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if(AuthService.isLoggedIn){
+        if(App.prefs.isLoggedIn){
             finish()
         }
     }
@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
         val password = loginPasswordText.text.toString()
         hideKeyBoard()
         if(email.isNotEmpty() && password.isNotEmpty()) {
-            AuthService.loginUser(this, email, password) { loginSuccess ->
+            AuthService.loginUser(email, password) { loginSuccess ->
                 if (loginSuccess) {
                     AuthService.findUserByEmail(this) { findSuccess ->
                         if (findSuccess) {

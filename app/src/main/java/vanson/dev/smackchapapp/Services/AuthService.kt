@@ -11,6 +11,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import org.json.JSONObject
+import vanson.dev.smackchapapp.Controller.App
 import vanson.dev.smackchapapp.Utilities.*
 
 
@@ -50,12 +51,11 @@ import vanson.dev.smackchapapp.Utilities.*
 
 object AuthService {
 
-    var isLoggedIn = false
-    var userEmail = ""
-    var authToken = ""
+//    var isLoggedIn = false
+//    var userEmail = ""
+//    var authToken = ""
 
     fun registerUser(
-        context: Context,
         email: String,
         password: String,
         complete: (Boolean) -> Unit
@@ -87,10 +87,10 @@ object AuthService {
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
         )
-        Volley.newRequestQueue(context).add(registerRequest)
+        App.prefs.requestQueue.add(registerRequest)
     }
 
-    fun loginUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
+    fun loginUser(email: String, password: String, complete: (Boolean) -> Unit) {
 
         val jsonBody = JSONObject()
         jsonBody.put("email", email)
@@ -99,9 +99,9 @@ object AuthService {
 
         val loginRequest = object : JsonObjectRequest(Method.POST, URL_LOGIN, null, Response.Listener { response ->
                 try {
-                    userEmail = response.getString("user")
-                    authToken = response.getString("token")
-                    isLoggedIn = true
+                    App.prefs.userEmail = response.getString("user")
+                    App.prefs.authToken = response.getString("token")
+                    App.prefs.isLoggedIn = true
                     complete(true)
                 } catch (e: JSONException) {
                     Log.d("JSON", "EXC:" + e.localizedMessage)
@@ -127,10 +127,10 @@ object AuthService {
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
         )
-        Volley.newRequestQueue(context).add(loginRequest)
+        App.prefs.requestQueue.add(loginRequest)
     }
 
-    fun createUser(context: Context, name: String, email: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit){
+    fun createUser(name: String, email: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit){
         val jsonBody = JSONObject()
         jsonBody.put("name", name)
         jsonBody.put("email", email)
@@ -163,16 +163,16 @@ object AuthService {
             }
 
             override fun getHeaders(): MutableMap<String, String> {
-                return mutableMapOf<String,String>("Authorization" to "Bearer $authToken")
+                return mutableMapOf<String,String>("Authorization" to "Bearer ${App.prefs.authToken}")
             }
         }
 
         createRequest.retryPolicy = DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
-        Volley.newRequestQueue(context).add(createRequest)
+        App.prefs.requestQueue.add(createRequest)
     }
 
     fun findUserByEmail(context: Context, complete: (Boolean) -> Unit){
-        val findUserRequest = object : JsonObjectRequest(Method.GET, "$URL_FIND_USER_BY_EMAIL$userEmail", null, Response.Listener {response ->
+        val findUserRequest = object : JsonObjectRequest(Method.GET, "$URL_FIND_USER_BY_EMAIL${App.prefs.userEmail}", null, Response.Listener {response ->
             try {
                 UserDataService.name = response.getString("name")
                 UserDataService.email = response.getString("email")
@@ -195,10 +195,10 @@ object AuthService {
             }
 
             override fun getHeaders(): MutableMap<String, String> {
-                return mutableMapOf<String,String>("Authorization" to "Bearer $authToken")
+                return mutableMapOf<String,String>("Authorization" to "Bearer ${App.prefs.authToken}")
             }
         }
         findUserRequest.retryPolicy = DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
-        Volley.newRequestQueue(context).add(findUserRequest)
+        App.prefs.requestQueue.add(findUserRequest)
     }
 }

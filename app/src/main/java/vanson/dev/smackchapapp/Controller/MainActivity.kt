@@ -8,11 +8,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
@@ -28,6 +30,7 @@ import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import vanson.dev.smackchapapp.Model.Channel
 import vanson.dev.smackchapapp.R
@@ -41,19 +44,24 @@ class MainActivity : AppCompatActivity() {
 
     private val socket = IO.socket(SOCKET_URL)
     lateinit var channelAdapter: ArrayAdapter<Channel>
+    private var selectedChannel: Channel? = null
     private lateinit var appBarConfiguration: AppBarConfiguration
     private val userDataChangeReceiver = object : BroadcastReceiver(){ //receiver broadcast
         override fun onReceive(context: Context?, intent: Intent?) {
-            if(AuthService.isLoggedIn){
+            if(App.prefs.isLoggedIn){
                 userNameNavHeader.text = UserDataService.name
                 userEmailNavHeader.text = UserDataService.email
                 userImageNavHeader.setImageResource(resources.getIdentifier(UserDataService.avatarName, "drawable", packageName))
                 loginBtnNavHeader.text = "Logout"
                 userImageNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
 
-                MessageService.getChannels(context!!){complete ->
+                MessageService.getChannels{complete ->
                     if(complete){
-                        channelAdapter.notifyDataSetChanged() //reload an build UI again when data change
+                        if(MessageService.channels.size > 0){
+                            selectedChannel = MessageService.channels[0]
+                            updateWithChannel()
+                            channelAdapter.notifyDataSetChanged() //reload an build UI again when data change
+                        }
                     }
                 }
             }
@@ -61,6 +69,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun updateWithChannel(){
+        mainChannelName.text = "#${selectedChannel?.name}"
+    }
     private fun setupAdapters(){
         channelAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1, MessageService.channels)
         channel_list.adapter = channelAdapter
@@ -90,6 +101,16 @@ class MainActivity : AppCompatActivity() {
         socket.connect()
         socket.on("channelCreated", onNewChannel) //work on other thread not main thread
         setupAdapters()
+
+        //listener for item in list channel
+        channel_list.setOnItemClickListener { _, _, i, _ ->
+            selectedChannel = MessageService.channels[i]
+            drawerLayout.closeDrawer(GravityCompat.START)
+            updateWithChannel()
+        }
+        if(App.prefs.isLoggedIn){
+            AuthService.findUserByEmail(this){}
+        }
     }
 
     override fun onResume() {
@@ -120,7 +141,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loginBtnNavHeaderClicked(view: View){
-        if(AuthService.isLoggedIn){
+        if(App.prefs.isLoggedIn){
             UserDataService.logOut()
             userNameNavHeader.text = "Please login!"
             userEmailNavHeader.text = ""
@@ -134,7 +155,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addChannelClicked(view: View){
-        if(AuthService.isLoggedIn){
+        if(App.prefs.isLoggedIn){
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.add_channel_diag, null)
 
