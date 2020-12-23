@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -26,6 +27,7 @@ import androidx.navigation.ui.setupWithNavController
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import vanson.dev.smackchapapp.Model.Channel
 import vanson.dev.smackchapapp.R
@@ -38,6 +40,7 @@ import vanson.dev.smackchapapp.Utilities.SOCKET_URL
 class MainActivity : AppCompatActivity() {
 
     private val socket = IO.socket(SOCKET_URL)
+    lateinit var channelAdapter: ArrayAdapter<Channel>
     private lateinit var appBarConfiguration: AppBarConfiguration
     private val userDataChangeReceiver = object : BroadcastReceiver(){ //receiver broadcast
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -47,9 +50,20 @@ class MainActivity : AppCompatActivity() {
                 userImageNavHeader.setImageResource(resources.getIdentifier(UserDataService.avatarName, "drawable", packageName))
                 loginBtnNavHeader.text = "Logout"
                 userImageNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
+
+                MessageService.getChannels(context!!){complete ->
+                    if(complete){
+                        channelAdapter.notifyDataSetChanged() //reload an build UI again when data change
+                    }
+                }
             }
         }
 
+    }
+
+    private fun setupAdapters(){
+        channelAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1, MessageService.channels)
+        channel_list.adapter = channelAdapter
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +89,7 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         socket.connect()
         socket.on("channelCreated", onNewChannel) //work on other thread not main thread
+        setupAdapters()
     }
 
     override fun onResume() {
@@ -151,7 +166,7 @@ class MainActivity : AppCompatActivity() {
 
             val newChannel = Channel(channelName, channelDescription, channelId)
             MessageService.channels.add(newChannel)
-            println(newChannel.name)
+            channelAdapter.notifyDataSetChanged()
         }
     }
     fun sendMessageBtnClicked(view: View){
