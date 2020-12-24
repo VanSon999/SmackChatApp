@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/messageUserImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/profiledefault" />
+
+    <TextView
+        android:id="@+id/messageUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/messageUserImage"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Van Son" />
+
+    <TextView
+        android:id="@+id/timeStampLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="May 25, 10:30 AM" />
+
+    <TextView
+        android:id="@+id/messageBodyLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/messageUserImage"
+        app:layout_constraintTop_toBottomOf="@+id/timeStampLabel"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mi tempus imperdiet nulla malesuada pellentesque elit eget gravida. Convallis posuere morbi leo urna molestie at elementum eu facilisis. Enim eu turpis egestas pretium aenean pharetra magna. Orci phasellus egestas tellus rutrum tellus. Phasellus vestibulum lorem sed risus. Mollis aliquam ut porttitor leo. Morbi enim nunc faucibus a pellentesque sit. Et ligula ullamcorper malesuada proin. Nunc lobortis mattis aliquam faucibus. Condimentum vitae sapien pellentesque habitant. Leo vel orci porta non pulvinar neque laoreet suspendisse interdum. Lectus nulla at volutpat diam ut venenatis tellus. Lectus vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt. Aliquet lectus proin nibh nisl condimentum id venenatis a. Facilisis magna etiam tempor orci eu." />
+</android.support.constraint.ConstraintLayout>
