@@ -119,6 +119,8 @@ class MainActivity : AppCompatActivity() {
         ), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter( //register listen broadcast
+            BROADCAST_USER_DATA_CHANGE))
         socket.connect()
         socket.on("channelCreated", onNewChannel) //work on other thread not main thread
         socket.on("messageCreated", onNewMessage)
@@ -133,12 +135,6 @@ class MainActivity : AppCompatActivity() {
         if(App.prefs.isLoggedIn){
             AuthService.findUserByEmail(this){}
         }
-    }
-
-    override fun onResume() {
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter( //register listen broadcast
-            BROADCAST_USER_DATA_CHANGE))
-        super.onResume()
     }
 
 //    override fun onPause() {
@@ -172,6 +168,7 @@ class MainActivity : AppCompatActivity() {
             userImageNavHeader.setImageResource(R.drawable.profiledefault)
             loginBtnNavHeader.text = "Login"
             userImageNavHeader.setBackgroundColor(Color.TRANSPARENT)
+            mainChannelName.text = "Please Log In!"
         }else{
             var loginIntent = Intent(this, LoginActivity::class.java)
             startActivity(loginIntent)
