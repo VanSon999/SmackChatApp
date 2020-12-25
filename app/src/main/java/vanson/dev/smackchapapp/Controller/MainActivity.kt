@@ -135,6 +135,8 @@ class MainActivity : AppCompatActivity() {
         if(App.prefs.isLoggedIn){
             AuthService.findUserByEmail(this){}
         }
+
+        Log.d("CREATE MAIN", "Hello World!")
     }
 
 //    override fun onPause() {

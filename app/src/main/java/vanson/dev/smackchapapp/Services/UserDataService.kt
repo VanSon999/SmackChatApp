@@ -17,7 +17,7 @@ object UserDataService {
         var b = 0
 //        val strippedColor = color.replace("[","").replace("]","").replace(",", "")
         val strippedColor = color.replace(",|\\[|\\]".toRegex(), "")
-        val scanner = Scanner(strippedColor)
+        val scanner = Scanner(strippedColor).useLocale(Locale.US)
         if(scanner.hasNext()){
             r = (scanner.nextDouble() * 255).toInt()
             g = (scanner.nextDouble() * 255).toInt()
